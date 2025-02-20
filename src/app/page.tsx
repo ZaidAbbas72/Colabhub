@@ -1,8 +1,5 @@
-import { AuthScreen } from "@/app/auth-screen";
-// import { DESTRUCTION } from "dns";
+import { AuthScreen as AuthenticationScreen } from "@/app/components/auth-screen";
+
 export default function Home() {
-  return (
-   <AuthScreen/>
-  
-  );
+  return <AuthenticationScreen />;
 }
