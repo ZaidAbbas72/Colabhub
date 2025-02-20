@@ -36,7 +36,7 @@ export const SignUpCard = ({ setState }: SignUpCardProps) => {
       });
 
       if (res.ok) {
-        setSuccess("Account created successfully! Now you can log in."); // ✅ Success message
+        setSuccess("Account created successfully! Now you can log in."); 
         setEmail("");
         setPassword("");
         setConfirmPassword("");

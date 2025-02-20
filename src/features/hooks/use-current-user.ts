@@ -1,37 +1,48 @@
 import { useState, useEffect } from "react";
+import { User } from "@/types/user";
 
 export const useCurrentUser = () => {
-    const [result, setResult] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            console.log("Fetching user data...");
-            try {
-                const res = await fetch("/api/auth/current-user", {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                }); // Call API route
-                const result = await res.json();
+  useEffect(() => {
+    const fetchUser = async () => {
+      console.log(" Fetching user data...");
 
-                console.log("API Response:", result);
+      try {
+        const res = await fetch("/api/auth/current-user", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
-                if (res.ok) {
-                    setResult(result); // Directly store the result
-                } else {
-                    console.error(result.error);
-                }
-            } catch (error) {
-                console.error("Error fetching user:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
+        if (!res.ok) {
+          const errorData = await res.json();
+          console.error("❌ API Error:", errorData.error || "Unknown error");
+          setUser(null);
+          return;
+        }
 
-        fetchUser();
-    }, []);
+        const data: User = await res.json();
 
-    return { result, isLoading };
+        if (data && data.email) {
+          console.log("✅ User data fetched successfully:");
+          setUser(data);
+        } else {
+          console.warn("⚠️ User data is incomplete or missing:");
+          setUser(null);
+        }
+      } catch (error) {
+        console.error("❌ Error fetching user:", error);
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  return { user, isLoading };
 };

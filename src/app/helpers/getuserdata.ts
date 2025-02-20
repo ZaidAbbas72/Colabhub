@@ -1,10 +1,10 @@
-import { NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
+import { NextRequest } from 'next/server';
+import jwt from 'jsonwebtoken';
 
 export const getDataFromUser = (request: NextRequest) => {
     try {
         // Retrieve token from cookies
-        const token = request.cookies.get("token")?.value;
+        const token = request.cookies.get('token')?.value;
 
         if (!token) {
             throw new Error("Unauthorized: No token provided");
