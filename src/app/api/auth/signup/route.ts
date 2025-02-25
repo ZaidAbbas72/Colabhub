@@ -2,8 +2,7 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import User from "@/models/User"; 
 import bcrypt from "bcryptjs";
-import { hash } from "crypto";
-import { hashPassword } from "@/lib/utils";
+
 
 
 export async function POST(req: Request) {

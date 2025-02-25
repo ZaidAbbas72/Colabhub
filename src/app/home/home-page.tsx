@@ -9,23 +9,6 @@ import { UserButton } from "../components/user-button"; // Import useRouter for 
 export const HomePage = () => {
   const router = useRouter();
 
-  const handleLogout = async () => {
-    try {
-      const response = await fetch("/api/auth/logout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
-
-      if (response.ok) {
-        router.push("/"); // Redirect to the login page after successful logout
-      } else {
-        // Handle error
-        console.error("Logout failed");
-      }
-    } catch (error) {
-      console.error("An error occurred during logout", error);
-    }
-  };
 
   return (
     <div className="relative flex items-center justify-center h-screen">

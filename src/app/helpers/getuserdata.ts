@@ -10,7 +10,6 @@ export const getDataFromUser = (request: NextRequest) => {
             throw new Error("Unauthorized: No token provided");
         }
 
-        console.log("Received Token:", token); // Debugging
 
         // Verify and decode token
         const decodedToken: any = jwt.verify(token, process.env.JWT_SECRET!);
@@ -19,9 +18,9 @@ export const getDataFromUser = (request: NextRequest) => {
             throw new Error("Unauthorized: Invalid token");
         }
 
-        console.log("Decoded Token:", decodedToken); // Debugging
 
         return {
+            id: decodedToken.id,
             email: decodedToken.email,
             name: decodedToken.name,
         };
