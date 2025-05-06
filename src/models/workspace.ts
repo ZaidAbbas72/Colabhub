@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { nanoid } from "nanoid";
+
 const WorkspaceSchema = new Schema({
   name: { 
     type: String, 
@@ -9,10 +9,20 @@ const WorkspaceSchema = new Schema({
     type: String, 
     required: true,
     unique: true,
-    default: () => nanoid(8)
+  },
+  ownerId: {
+    type: String,
+    required: true
+  },
+  joinCode: {
+    type: String,
+    required: true,
+    unique: true,
+    default: () => Math.floor(100000 + Math.random() * 900000).toString() // Generate 6-digit code
   }
 }, {
   timestamps: true
 });
 
-export default mongoose.models.Workspace || mongoose.model('Workspace', WorkspaceSchema);
+const Workspace = mongoose.models.Workspace || mongoose.model('Workspace', WorkspaceSchema);
+export default Workspace;

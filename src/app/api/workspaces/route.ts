@@ -1,14 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import Workspace from "@/models/workspace";
+import Member from "@/models/members";
 import { nanoid } from "nanoid";
+import mongoose from 'mongoose';
+import { getDataFromUser } from "@/lib/auth";
+import { generateJoinCode } from "@/lib/utils";
 
-
-export async function GET() {
-  await dbConnect(); // Ensure MongoDB connection
+export async function GET(req: NextRequest) {
+  await dbConnect();
 
   try {
-    const workspaces = await Workspace.find({});
+    // Get the authenticated user's data
+    const userData = getDataFromUser(req);
+    
+    if (!userData?.emp_id) {
+      return NextResponse.json([], { status: 200 });
+    }
+
+    // Only return workspaces owned by this user
+    const workspaces = await Workspace.find({ ownerId: userData.emp_id });
+
     return NextResponse.json(workspaces, { status: 200 });
   } catch (error: any) {
     console.error("Error fetching workspaces:", error);
@@ -20,29 +32,43 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  await dbConnect(); // Ensure MongoDB connection
+  await dbConnect();
 
   try {
-    const bodyText = await req.text(); // Read raw request body
+    const bodyText = await req.text();
     if (!bodyText) {
       return NextResponse.json({ message: "Request body is empty" }, { status: 400 });
     }
 
-    const { name } = JSON.parse(bodyText); // Manually parse JSON
+    const { name, Emp_id } = JSON.parse(bodyText);
     console.log("Received workspace name:", name);
 
-    if (!name) {
-      return NextResponse.json({ message: "Workspace name is required" }, { status: 400 });
+    if (!name || !Emp_id) {
+      return NextResponse.json({ message: "Workspace name and Employee ID are required" }, { status: 400 });
     }
 
     const workspaceId = nanoid(8);
+    const joinCode = await generateJoinCode();
+    
+    // Create workspace
     const newWorkspace = await Workspace.create({
       name,
-      workspaceId // Use workspaceId instead of id
+      workspaceId,
+      ownerId: Emp_id,
+      joinCode
+    });
+
+    // Make the creator an admin with workspace name
+    await Member.create({
+      Emp_id,
+      workspaceId,
+      workspaceName: name,
+      role: "admin" // Workspace creator is automatically an admin
     });
 
     console.log("Created workspace:", newWorkspace);
     return NextResponse.json(newWorkspace, { status: 201 });
+
   } catch (error: any) {
     console.error("Error creating workspace:", error);
     return NextResponse.json(

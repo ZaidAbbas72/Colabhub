@@ -3,7 +3,7 @@ import { Workspace } from "@/types/Workspace";
 
 interface RequestType {
   name: string;
-  ownerId: string;
+  Emp_id: string;
 }
 
 export const useCreateWorkspace = () => {

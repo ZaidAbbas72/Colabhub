@@ -1,6 +1,8 @@
 export interface Workspace {
-  _id: string;
+  workspaceId: string;
   name: string;
   ownerId: string;
-  createdAt: string;
+  joinCode: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }

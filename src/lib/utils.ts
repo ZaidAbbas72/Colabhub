@@ -16,3 +16,8 @@ export const verifyPassword = async (password: string, hashedPassword: string) =
   return await bcrypt.compare(password, hashedPassword);
 };
 
+export const generateJoinCode = async (): Promise<string> => {
+  const code = Math.floor(100000 + Math.random() * 900000).toString();
+  return code;
+};
+

@@ -4,9 +4,16 @@ import { useParams } from "next/navigation";
 
 export const useWorkspaceId = () => {
     const params = useParams();
+    
+    // Handle different types and ensure we return string | undefined
+    if (!params?.workspaceId) {
+        return undefined;
+    }
 
-    // Ensure workspaceId is always a string
-    const workspaceId = Array.isArray(params._id) ? params._id[0] : params._id;
+    // Handle case where workspaceId might be an array
+    const workspaceId = Array.isArray(params.workspaceId) 
+        ? params.workspaceId[0] 
+        : params.workspaceId;
 
-    return workspaceId || null; // Return null if undefined
+    return workspaceId;
 };
